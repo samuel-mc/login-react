@@ -1,0 +1,30 @@
+.loginInput{
+    border: none;
+    border: 1px solid #C8C6C6;
+    border-radius: 10px;
+    font-size: 15px;
+    height: 50px;
+    margin: 10px 0;
+    padding: 0 10px;
+    position: relative;
+    width: calc(100% - 5px);
+}
+
+.loginInput::placeholder{
+    color: #C8C6C6;
+    font-family: 'Urbanist', sans-serif;
+    padding: 0 5px;
+}
+
+.loginInput:focus {
+    outline: none;
+    border: 1px solid #4B6587;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+@media (max-width: 660px) {
+    .loginInput {
+        width: calc(100% - 25px);
+    }
+}
