@@ -1,5 +1,6 @@
 import React from 'react';
 import { LoginInput } from '../components/LoginInput';
+import { LoginButton } from '../components/LoginButton';
 import '../assets/style/LoginContainer.css'
 
 const LoginContainer = ({ children }) => {
@@ -9,6 +10,7 @@ const LoginContainer = ({ children }) => {
             <form action="">
                 <LoginInput placeholder="Email" type="email" />
                 <LoginInput placeholder="Password" type="pasword" />
+                <LoginButton />
             </form>
         </div>
     )
