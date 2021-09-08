@@ -1,56 +1,61 @@
 package com.challenge.controller;
 
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.challenge.model.User;
-import com.challenge.repo.IUserRepo;
+import com.challenge.service.UserService;
 
 
 /* Controlador para el CRUD en la ruta de usuarios */
 @RestController
-@RequestMapping("/users")
 public class UserController {
 	
 	@Autowired
-	private IUserRepo repo; 
+	private UserService userService;
 	
-	@PostMapping //Insertar un nuevo usuario.
-	public void create(@RequestBody User user) {
-		repo.save(user);
+	@RequestMapping(value = "/users", method = RequestMethod.POST)
+	public ResponseEntity<User> create(@RequestBody User user) {
+		User userCreated = userService.create(user);
+		
+		if(userCreated == null)
+			return new ResponseEntity<User>(userCreated, HttpStatus.CONFLICT); //Si el usuario ya esta registrado, enviamos un estado de error.
+		
+        return new ResponseEntity<User>(userCreated, HttpStatus.CREATED);
 	}
 	
-	@GetMapping //Obtiene todos los usuarios.
-	public List<User> readAll(){
-		return repo.findAll();
+	@RequestMapping(value = "/users", method = RequestMethod.GET)
+	public ResponseEntity<List<User>> readAll(){
+		List<User> users = userService.list();
+		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 	}
-
-	@GetMapping(value = "/{id}") //Obtener un usuario por id
-	public Optional<User> readOneById(@PathVariable("id") Integer id){
-		return repo.findById(id);
+	
+	@RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Optional<User>> readOneById(@PathVariable("id") Integer id){
+		Optional<User> user = userService.getOne(id);
+		return new ResponseEntity<Optional<User>>(user, HttpStatus.OK);
 		
 	}
 	
-	/* ToDo: Agregar obtener usuario por email */
-	
-	
-	@PutMapping //Modificar cierto usuario.
-	public void update(@RequestBody User user) {
-		repo.save(user);
+	@RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<User> update(@RequestBody User user) {
+		User userUpdated = userService.update(user);
+		return new ResponseEntity<User>(userUpdated, HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "/{id}")
-	public void delete(@PathVariable("id") Integer id) {
-		repo.deleteById(id);
+	@RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Object> delete(@PathVariable("id") Integer id) {
+		userService.delete(id);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 }
