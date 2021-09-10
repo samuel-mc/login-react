@@ -1,40 +1,46 @@
 import React from 'react';
 import { LoginInput } from '../components/LoginInput';
 import { LoginButton } from '../components/LoginButton';
-import '../assets/style/LoginContainer.css'
-import { validateEmail } from '../assets/js/validateEmail'
+import '../assets/style/LoginContainer.css';
+import { fetchLogin } from '../assets/js/auth/login';
+import { useHistory } from "react-router-dom";
+
 
 const LoginContainer = () => {
+
+    const history = useHistory();
 
     const [data, setData] = React.useState({
         email: '',
         password: ''
     });
 
-    const handleInputChange = (event) => {
+    const onChange = (event) => {
         setData({
             ...data,
             [event.target.name] : event.target.value
         })
-        console.log(data)
-
     }
 
-    const loginUser = (e) => {
+    const loginUser = async (e) => {
         e.preventDefault();
-        if(!validateEmail(data.email)) {
-            alert('Email no valido.')
+        const response = await fetchLogin(data);
+        if(response && response.status === 200) {
+            const json = await response.json();
+            document.cookie = `token=${json.token}`;
+            history.push("/");
+        } else {
+            alert("Datos Incorrectos")
             return;
         }
-        console.log('x');
     }
 
     return (
         <div className="loginContainer">
             <h1 className="loginTitle"> Login </h1>
             <form onSubmit={loginUser}>
-                <LoginInput placeholder="Email" type="email" name="email" onChange={handleInputChange}/>
-                <LoginInput placeholder="Password" type="password" name="password" onChange={handleInputChange} />
+                <LoginInput placeholder="Email" type="email" name="email" onChange={onChange}/>
+                <LoginInput placeholder="Password" type="password" name="password" onChange={onChange} />
                 <LoginButton />
             </form>
         </div>

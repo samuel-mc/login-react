@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.challenge.model.User;
@@ -16,15 +17,23 @@ public class UserService {
 	@Autowired
 	private IUserRepo repository;
 	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
+	
 	/**
 	 * Metodo para registrar un nuevo usuario, primero verifica que no este registrado su email.
 	 * @param user Requiere el usuario (sus datos correspondientes).
 	 * @return regresa null si el usuario esta registrado, en caso contrario, regresa en usuario creado.
 	 */
 	public User create(User user) {
-		User existingUser = getByEmail(user.getEmail());
-		if(existingUser != null)
-			return null;		
+		User existingUser = getByEmail(user.getEmail()); // Revisa si el email ya esta registrado
+		
+		if(existingUser != null) // Si encuentra el email en la bd, arroja un error.
+			return null;
+		
+		String passwordEncoded = encoder.encode(user.getPassword()); // Se codifica el password.
+		user.setPassword(passwordEncoded); // Se asigna al usuario el password ya codificado.
+		
 		User userCreated = repository.save(user);
 		return userCreated;
 	}
