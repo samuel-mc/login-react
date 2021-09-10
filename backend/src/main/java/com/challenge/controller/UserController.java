@@ -4,6 +4,10 @@ package com.challenge.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +34,8 @@ public class UserController {
 	@Autowired
 	private JwtProvider jwtProvider;
 	
+	Logger logger = LoggerFactory.getLogger(UserController.class);
+	
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	public ResponseEntity<User> create(@RequestBody User user) {
 		User userCreated = userService.create(user);
@@ -42,16 +48,27 @@ public class UserController {
 	
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
 	@CrossOrigin
-	public ResponseEntity<List<User>> readAll(){
-		List<User> users = userService.list();
+	public ResponseEntity<List<User>> readAll(HttpServletRequest request){
+		List<User> users = null;
+		
+		if(jwtProvider.validateHeaderToken(request) == false) {
+			return new ResponseEntity<List<User>>(users, HttpStatus.UNAUTHORIZED);
+		}
+		
+		users = userService.list();
 		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	@CrossOrigin
 	public ResponseEntity<User> readByToken(@RequestParam(name = "token") String token){
+		User user = null;
+		
+		if(jwtProvider.validateToken(token) == false)
+			return new ResponseEntity<User>(user, HttpStatus.UNAUTHORIZED);
+		
 		String email = jwtProvider.getEmailFromToken(token);
-		User user = userService.getByEmail(email);
+		user = userService.getByEmail(email);
 		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 	
