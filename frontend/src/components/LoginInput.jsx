@@ -2,12 +2,15 @@ import React from 'react';
 import '../assets/style/LoginInput.css'
 
 const LoginInput = (props) => {
+
     return (
-        <
-            input
-            type={props.type}
-            placeholder={props.placeholder}
+        <input
             className="loginInput"
+            name={props.name}
+            placeholder={props.placeholder}
+            type={props.type}
+            onChange={props.onChange}
+            required
         />
     );
 }
