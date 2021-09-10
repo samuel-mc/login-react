@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.challenge.auth.jwt.JwtProvider;
 import com.challenge.model.User;
 import com.challenge.service.UserService;
 
@@ -25,6 +26,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private JwtProvider jwtProvider;
 	
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	public ResponseEntity<User> create(@RequestBody User user) {
@@ -45,8 +49,10 @@ public class UserController {
 	
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	@CrossOrigin
-	public ResponseEntity<String> readByToken(@RequestParam(name = "token") String token){
-		return new ResponseEntity<String>(token, HttpStatus.OK);
+	public ResponseEntity<User> readByToken(@RequestParam(name = "token") String token){
+		String email = jwtProvider.getEmailFromToken(token);
+		User user = userService.getByEmail(email);
+		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/users/{id}", method = RequestMethod.GET)

@@ -52,7 +52,7 @@ public class UserService {
 	 * @param email Requiere el email del usuario a consultar.
 	 * @return regresa el usuario encontrato.
 	 */
-	private User getByEmail(String email) {
+	public User getByEmail(String email) {
 		return repository.findByEmail(email);
 	}
 	

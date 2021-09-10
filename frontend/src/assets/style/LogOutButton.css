@@ -1,0 +1,22 @@
+.buttonContainer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.logOutButton {
+    box-align: center;
+    background-color: rgb(146, 0, 0);
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    float: inline-end;
+    font-family: 'Urbanist', sans-serif;
+    margin-top: 20px;
+    margin-right: 20px;
+    padding: 10px;
+}
+
+.logOutButton:hover{
+    background-color: rgb(189, 6, 6);
+    cursor: pointer;
+}
