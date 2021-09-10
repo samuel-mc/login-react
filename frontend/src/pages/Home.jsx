@@ -2,6 +2,7 @@ import React from 'react';
 import { LogOutButton } from '../components/LogOutButton';
 import { UserTable } from '../components/UsersTable';
 import { useInitalState } from '../hooks/useInitialState';
+import { useHistory } from "react-router-dom";
 import '../assets/style/Home.css';
 // import { fetchUser } from 'react';
 
@@ -9,7 +10,8 @@ const token = document.cookie.split('=')[1];
 
 const Home = () => {
     const [users, setUsers] = React.useState([]);
-    
+    const history = useHistory();
+
     document.title = "Home";
 
     const userInitial = useInitalState(token);
@@ -27,8 +29,15 @@ const Home = () => {
               'Authorization': `Bearer ${token}`
             }
         })
-        .then(response => response.json())
-        .then(data => setUsers(data));
+        .then(response => {
+            if(response.status == 200) {
+                response.json()
+                .then(data => setUsers(data));
+            } else {
+                alert("Es necesario Iniciar Sesión");
+                history.push("/login");
+            }
+        })
     }
 
     return (

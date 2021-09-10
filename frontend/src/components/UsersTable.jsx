@@ -4,12 +4,16 @@ import '../assets/style/UserTable.css'
 const UserTable = (props) => {
     return (
         <table className="userTable">
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Rol</th>
-            </tr>
-            {props.children}
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                {props.children}
+            </tbody>
         </table>
     )
 }
